@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nursing.center.mapper.FoodMapper">
+    <resultMap id="BaseResultMap" type="com.nursing.center.model.Food">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="category" jdbcType="VARCHAR" property="category"/>
+        <result column="label" jdbcType="VARCHAR" property="label"/>
+        <result column="price" jdbcType="DOUBLE" property="price"/>
+        <result column="photo" jdbcType="VARCHAR" property="photo"/>
+        <result column="momal_flag" jdbcType="CHAR" property="momalFlag"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete
+        from food
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.nursing.center.model.Food">
+        insert into food (id, name, category,
+                          label, price, photo,
+                          momal_flag)
+        values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{category,jdbcType=VARCHAR},
+                #{label,jdbcType=VARCHAR}, #{price,jdbcType=DOUBLE}, #{photo,jdbcType=VARCHAR},
+                #{momalFlag,jdbcType=CHAR})
+    </insert>
+    <update id="updateByPrimaryKey" parameterType="com.nursing.center.model.Food">
+        update food
+        set name       = #{name,jdbcType=VARCHAR},
+            category   = #{category,jdbcType=VARCHAR},
+            label      = #{label,jdbcType=VARCHAR},
+            price      = #{price,jdbcType=DOUBLE},
+            photo      = #{photo,jdbcType=VARCHAR},
+            momal_flag = #{momalFlag,jdbcType=CHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select id, name, category, label, price, photo, momal_flag
+        from food
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+        select id, name, category, label, price, photo, momal_flag
+        from food
+    </select>
+
+    <select id="queryAll" parameterType="com.nursing.center.model.Food" resultMap="BaseResultMap">
+        select id, name, category, label, price, photo, momal_flag
+        from food
+        <where>
+            <if test="name != null and name != ''">
+                and name like concat(#{name},'%')
+            </if>
+            <if test="category != null and category != ''">
+                and category = #{category}
+            </if>
+            <if test="label != null and label != ''">
+                and label = #{label}
+            </if>
+        </where>
+    </select>
+</mapper>

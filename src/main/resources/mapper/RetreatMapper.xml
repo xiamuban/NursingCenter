@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nursing.center.mapper.RetreatMapper">
+  <resultMap id="BaseResultMap" type="com.nursing.center.model.Retreat">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="customer_id" jdbcType="INTEGER" property="customerId" />
+    <result column="retreat_time" jdbcType="TIMESTAMP" property="retreatTime" />
+    <result column="retreat_reason" jdbcType="VARCHAR" property="retreatReason" />
+    <result column="audit_status" jdbcType="CHAR" property="auditStatus" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from retreat
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.nursing.center.model.Retreat">
+    insert into retreat (id, create_time, customer_id, 
+      retreat_time, retreat_reason, audit_status
+      )
+    values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{customerId,jdbcType=INTEGER}, 
+      #{retreatTime,jdbcType=TIMESTAMP}, #{retreatReason,jdbcType=VARCHAR}, #{auditStatus,jdbcType=CHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.nursing.center.model.Retreat">
+    update retreat
+    set create_time = #{createTime,jdbcType=TIMESTAMP},
+      customer_id = #{customerId,jdbcType=INTEGER},
+      retreat_time = #{retreatTime,jdbcType=TIMESTAMP},
+      retreat_reason = #{retreatReason,jdbcType=VARCHAR},
+      audit_status = #{auditStatus,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, create_time, customer_id, retreat_time, retreat_reason, audit_status
+    from retreat
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, create_time, customer_id, retreat_time, retreat_reason, audit_status
+    from retreat
+  </select>
+
+  <update id="updateStatus" parameterType="com.nursing.center.model.Retreat">
+    update retreat set audit_status = #{auditStatus} where id=#{id}
+  </update>
+
+  <resultMap id="connResultMap" type="com.nursing.center.model.Retreat" extends="BaseResultMap">
+    <!-- 一对一关联 -->
+    <!--
+      property: 一对一关联封装的父表的对象名
+      column: 两张表的关联字段名
+      javaType: 一对一关联封装的父表的类名
+    -->
+    <association property="customer" column="customer_id" javaType="com.nursing.center.model.Customer">
+      <id column="cid" jdbcType="INTEGER" property="id" />
+      <result column="is_deleted" jdbcType="INTEGER" property="isDeleted" />
+      <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+      <result column="customer_age" jdbcType="INTEGER" property="customerAge" />
+      <result column="customer_sex" jdbcType="INTEGER" property="customerSex" />
+      <result column="idcard" jdbcType="VARCHAR" property="idcard" />
+      <result column="room_number" jdbcType="INTEGER" property="roomNumber" />
+      <result column="elder_type" jdbcType="VARCHAR" property="elderType" />
+      <result column="checkin_date" jdbcType="TIMESTAMP" property="checkinDate" />
+      <result column="expiration_date" jdbcType="TIMESTAMP" property="expirationDate" />
+      <result column="contact_tel" jdbcType="VARCHAR" property="contactTel" />
+      <result column="bed_id" jdbcType="INTEGER" property="bedId" />
+      <result column="psychosomatic_state" jdbcType="VARCHAR" property="psychosomaticState" />
+      <result column="attention" jdbcType="VARCHAR" property="attention" />
+      <result column="birthday" jdbcType="DATE" property="birthday" />
+      <result column="height" jdbcType="VARCHAR" property="height" />
+      <result column="marital_status" jdbcType="VARCHAR" property="maritalStatus" />
+      <result column="weight" jdbcType="VARCHAR" property="weight" />
+      <result column="blood_type" jdbcType="VARCHAR" property="bloodType" />
+      <result column="filepath" jdbcType="VARCHAR" property="filepath" />
+    </association>
+  </resultMap>
+
+  <select id="queryAll" parameterType="com.nursing.center.model.Retreat" resultMap="connResultMap">
+        select r.id,r.customer_id,r.audit_status, r.create_time, r.retreat_time, r.retreat_reason,
+               c.id cid, c.is_deleted, c.customer_name, c.customer_age, c.customer_sex,
+               c.idcard, c.room_number, c.elder_type, c.checkin_date, c.expiration_date, c.contact_tel, c.bed_id,
+               c.psychosomatic_state, c.attention, c.birthday, c.height, c.marital_status, c.weight, c.blood_type,
+               c.filepath
+        from retreat r
+        inner join customer c
+        on r.customer_id = c.id
+    <where>
+      <if test="customer != null">
+        <if test="customer.customerName != null and customer.customerName != ''">
+          AND customer_name like concat(#{customer.customerName},'%')
+        </if>
+        <if test="customer.elderType != null and customer.elderType != ''">
+          AND elder_type = #{customer.elderType}
+        </if>
+        <if test="customer.bedId != null and customer.bedId != ''">
+          AND bed_id = #{customer.bedId}
+        </if>
+      </if>
+      <if test="auditStatus != null and auditStatus != ''">
+        AND r.audit_status = #{auditStatus}
+      </if>
+    </where>
+  </select>
+
+  <resultMap id="ConnAllMap" type="com.nursing.center.model.Retreat" extends="connResultMap">
+    <!-- 一对多 -->
+    <!--
+      property: 一对多关联，查询出来的多的一方List对象赋值给一的对象里的属性名
+      ofType: 一对多关联，查询出来的多的一方List中存的对象类名
+    -->
+    <collection property="verifyList" ofType="com.nursing.center.model.Verify">
+      <id column="vid" property="id"></id>
+      <result column="con_id" property="conId"></result>
+      <result column="idea" property="idea"></result>
+      <result column="user_id" property="userId"></result>
+      <result column="vadd_date" property="addDate"></result>
+      <result column="vstatus" property="status"></result>
+      <result column="type" property="type"></result>
+      <!-- 一对一 -->
+      <association property="user" column="user_id" javaType="com.nursing.center.model.User">
+        <id column="uid" property="id"></id>
+        <result column="username" property="username"></result>
+        <result column="password" property="password"></result>
+      </association>
+    </collection>
+  </resultMap>
+
+  <select id="selById" parameterType="Integer" resultMap="ConnAllMap">
+    select r.id, r.create_time, customer_id, retreat_time, retreat_reason, audit_status,
+           c.id cid, c.is_deleted, c.customer_name, c.customer_age, c.customer_sex,
+           c.idcard, c.room_number, c.elder_type, c.checkin_date, c.expiration_date, c.contact_tel, c.bed_id,
+           c.psychosomatic_state, c.attention, c.birthday, c.height, c.marital_status, c.weight, c.blood_type,
+           c.filepath,
+           v.id vid, v.con_id, v.idea, v.user_id, v.add_date vadd_date,v.status vstatus,v.type,
+           u.id, username, sex, age, password, email, phone_number
+    from retreat r
+           inner join customer c on r.customer_id=c.id
+           left join verify v on r.id=v.con_id
+           left join user u on v.user_id=u.id
+    where r.id=#{id}
+  </select>
+</mapper>

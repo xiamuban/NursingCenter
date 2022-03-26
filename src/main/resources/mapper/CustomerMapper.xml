@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nursing.center.mapper.CustomerMapper">
+  <resultMap id="BaseResultMap" type="com.nursing.center.model.Customer">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="INTEGER" property="createBy" />
+    <result column="is_deleted" jdbcType="INTEGER" property="isDeleted" />
+    <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+    <result column="customer_age" jdbcType="INTEGER" property="customerAge" />
+    <result column="customer_sex" jdbcType="INTEGER" property="customerSex" />
+    <result column="idcard" jdbcType="VARCHAR" property="idcard" />
+    <result column="room_number" jdbcType="INTEGER" property="roomNumber" />
+    <result column="elder_type" jdbcType="VARCHAR" property="elderType" />
+    <result column="checkin_date" jdbcType="TIMESTAMP" property="checkinDate" />
+    <result column="expiration_date" jdbcType="TIMESTAMP" property="expirationDate" />
+    <result column="contact_tel" jdbcType="VARCHAR" property="contactTel" />
+    <result column="bed_id" jdbcType="INTEGER" property="bedId" />
+    <result column="psychosomatic_state" jdbcType="VARCHAR" property="psychosomaticState" />
+    <result column="attention" jdbcType="VARCHAR" property="attention" />
+    <result column="birthday" jdbcType="DATE" property="birthday" />
+    <result column="height" jdbcType="VARCHAR" property="height" />
+    <result column="marital_status" jdbcType="VARCHAR" property="maritalStatus" />
+    <result column="weight" jdbcType="VARCHAR" property="weight" />
+    <result column="blood_type" jdbcType="VARCHAR" property="bloodType" />
+    <result column="filepath" jdbcType="VARCHAR" property="filepath" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from customer
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.nursing.center.model.Customer">
+    insert into customer (id, create_time, create_by,
+      is_deleted, customer_name, customer_age,
+      customer_sex, idcard, room_number,
+      elder_type, checkin_date, expiration_date,
+      contact_tel, bed_id, psychosomatic_state,
+      attention, birthday, height,
+      marital_status, weight, blood_type,
+      filepath)
+    values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=INTEGER},
+      #{isDeleted,jdbcType=INTEGER}, #{customerName,jdbcType=VARCHAR}, #{customerAge,jdbcType=INTEGER},
+      #{customerSex,jdbcType=INTEGER}, #{idcard,jdbcType=VARCHAR}, #{roomNumber,jdbcType=INTEGER},
+      #{elderType,jdbcType=VARCHAR}, #{checkinDate,jdbcType=TIMESTAMP}, #{expirationDate,jdbcType=TIMESTAMP},
+      #{contactTel,jdbcType=VARCHAR}, #{bedId,jdbcType=INTEGER}, #{psychosomaticState,jdbcType=VARCHAR},
+      #{attention,jdbcType=VARCHAR}, #{birthday,jdbcType=DATE}, #{height,jdbcType=VARCHAR},
+      #{maritalStatus,jdbcType=VARCHAR}, #{weight,jdbcType=VARCHAR}, #{bloodType,jdbcType=VARCHAR},
+      #{filepath,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.nursing.center.model.Customer">
+    update customer
+    set create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=INTEGER},
+      is_deleted = #{isDeleted,jdbcType=INTEGER},
+      customer_name = #{customerName,jdbcType=VARCHAR},
+      customer_age = #{customerAge,jdbcType=INTEGER},
+      customer_sex = #{customerSex,jdbcType=INTEGER},
+      idcard = #{idcard,jdbcType=VARCHAR},
+      room_number = #{roomNumber,jdbcType=INTEGER},
+      elder_type = #{elderType,jdbcType=VARCHAR},
+      checkin_date = #{checkinDate,jdbcType=TIMESTAMP},
+      expiration_date = #{expirationDate,jdbcType=TIMESTAMP},
+      contact_tel = #{contactTel,jdbcType=VARCHAR},
+      bed_id = #{bedId,jdbcType=INTEGER},
+      psychosomatic_state = #{psychosomaticState,jdbcType=VARCHAR},
+      attention = #{attention,jdbcType=VARCHAR},
+      birthday = #{birthday,jdbcType=DATE},
+      height = #{height,jdbcType=VARCHAR},
+      marital_status = #{maritalStatus,jdbcType=VARCHAR},
+      weight = #{weight,jdbcType=VARCHAR},
+      blood_type = #{bloodType,jdbcType=VARCHAR},
+      filepath = #{filepath,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, create_time, create_by, is_deleted, customer_name, customer_age, customer_sex,
+    idcard, room_number, elder_type, checkin_date, expiration_date, contact_tel, bed_id,
+    psychosomatic_state, attention, birthday, height, marital_status, weight, blood_type,
+    filepath
+    from customer
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, create_time, create_by, is_deleted, customer_name, customer_age, customer_sex,
+    idcard, room_number, elder_type, checkin_date, expiration_date, contact_tel, bed_id,
+    psychosomatic_state, attention, birthday, height, marital_status, weight, blood_type,
+    filepath
+    from customer
+  </select>
+
+  <select id="queryAll" parameterType="com.nursing.center.model.Customer" resultMap="BaseResultMap">
+    select id, create_time, create_by, is_deleted, customer_name, customer_age, customer_sex,
+           idcard, room_number, elder_type, checkin_date, expiration_date, contact_tel, bed_id,
+           psychosomatic_state, attention, birthday, height, marital_status, weight, blood_type,
+           filepath
+    from customer
+    <where>
+      <if test="customerName != null and customerName != ''">
+        AND customer_name like concat(#{customerName},'%')
+      </if>
+      <if test="customerSex != null and customerSex != ''">
+        AND customer_sex = #{customerSex}
+      </if>
+      <if test="elderType != null and elderType != ''">
+        AND elder_type = #{elderType}
+      </if>
+      <if test="bedId != null and bedId != ''">
+        AND bed_id = #{bedId}
+      </if>
+    </where>
+  </select>
+
+  <update id="withdraw" parameterType="Integer">
+    update customer
+    set is_deleted = 1
+    where id = #{id}
+  </update>
+
+  <!-- 根据指定年份，按照月份统计职位数量 -->
+  <select id="selMonthNum" parameterType="Integer" resultType="com.nursing.center.vo.CustomerStatistics">
+    select month(checkin_date) cMonth, count(*) num
+    from customer
+    where year(checkin_date) = #{year}
+    group by month(checkin_date)
+    order by cMonth
+  </select>
+
+</mapper>

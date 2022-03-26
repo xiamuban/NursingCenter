@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nursing.center.mapper.MealCalendarMapper">
+  <resultMap id="BaseResultMap" type="com.nursing.center.model.MealCalendar">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="custfood_id" jdbcType="INTEGER" property="custfoodId" />
+    <result column="add_date" jdbcType="TIMESTAMP" property="addDate" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="del_flag" jdbcType="CHAR" property="delFlag" />
+    <result column="supply_type" jdbcType="CHAR" property="supplyType" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from meal_calendar
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.nursing.center.model.MealCalendar">
+    insert into meal_calendar (id, custfood_id, add_date, 
+      remarks, del_flag, supply_type
+      )
+    values (#{id,jdbcType=INTEGER}, #{custfoodId,jdbcType=INTEGER}, #{addDate,jdbcType=TIMESTAMP}, 
+      #{remarks,jdbcType=VARCHAR}, #{delFlag,jdbcType=CHAR}, #{supplyType,jdbcType=CHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.nursing.center.model.MealCalendar">
+    update meal_calendar
+    set custfood_id = #{custfoodId,jdbcType=INTEGER},
+      add_date = #{addDate,jdbcType=TIMESTAMP},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      del_flag = #{delFlag,jdbcType=CHAR},
+      supply_type = #{supplyType,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, custfood_id, add_date, remarks, del_flag, supply_type
+    from meal_calendar
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, custfood_id, add_date, remarks, del_flag, supply_type
+    from meal_calendar
+  </select>
+
+  <resultMap id="connResultMap" type="com.nursing.center.model.MealCalendar" extends="BaseResultMap">
+    <!-- 一对一关联 -->
+    <!--
+      property: 一对一关联封装的父表的对象名
+      column: 两张表的关联字段名
+      javaType: 一对一关联封装的父表的类名
+    -->
+    <association property="custFood" column="custfood_id" javaType="com.nursing.center.model.CustFood">
+      <id column="cfid" jdbcType="INTEGER" property="id" />
+      <result column="add_date" jdbcType="TIMESTAMP" property="addDate" />
+      <result column="cust_id" jdbcType="INTEGER" property="custId" />
+      <result column="food_id" jdbcType="INTEGER" property="foodId" />
+      <result column="food_date" jdbcType="TIMESTAMP" property="foodDate" />
+      <result column="food_week" jdbcType="INTEGER" property="foodWeek" />
+
+      <association property="customer" column="cust_id" javaType="com.nursing.center.model.Customer">
+        <id column="custid" jdbcType="INTEGER" property="id" />
+        <result column="is_deleted" jdbcType="INTEGER" property="isDeleted" />
+        <result column="customer_name" jdbcType="VARCHAR" property="customerName" />
+        <result column="customer_age" jdbcType="INTEGER" property="customerAge" />
+        <result column="customer_sex" jdbcType="INTEGER" property="customerSex" />
+        <result column="idcard" jdbcType="VARCHAR" property="idcard" />
+        <result column="room_number" jdbcType="INTEGER" property="roomNumber" />
+        <result column="elder_type" jdbcType="VARCHAR" property="elderType" />
+        <result column="checkin_date" jdbcType="TIMESTAMP" property="checkinDate" />
+        <result column="expiration_date" jdbcType="TIMESTAMP" property="expirationDate" />
+        <result column="contact_tel" jdbcType="VARCHAR" property="contactTel" />
+        <result column="bed_id" jdbcType="INTEGER" property="bedId" />
+        <result column="psychosomatic_state" jdbcType="VARCHAR" property="psychosomaticState" />
+        <result column="attention" jdbcType="VARCHAR" property="attention" />
+        <result column="birthday" jdbcType="DATE" property="birthday" />
+        <result column="height" jdbcType="VARCHAR" property="height" />
+        <result column="marital_status" jdbcType="VARCHAR" property="maritalStatus" />
+        <result column="weight" jdbcType="VARCHAR" property="weight" />
+        <result column="blood_type" jdbcType="VARCHAR" property="bloodType" />
+        <result column="filepath" jdbcType="VARCHAR" property="filepath" />
+      </association>
+
+      <association property="food" column="food_id" javaType="com.nursing.center.model.Food">
+        <id column="fid" jdbcType="INTEGER" property="id"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="category" jdbcType="VARCHAR" property="category"/>
+        <result column="label" jdbcType="VARCHAR" property="label"/>
+        <result column="price" jdbcType="DOUBLE" property="price"/>
+        <result column="photo" jdbcType="VARCHAR" property="photo"/>
+        <result column="momal_flag" jdbcType="CHAR" property="momalFlag"/>
+      </association>
+    </association>
+
+  </resultMap>
+
+  <select id="queryAll" parameterType="com.nursing.center.model.MealCalendar" resultMap="connResultMap" >
+    select mc.id, custfood_id, mc.add_date, mc.remarks, mc.del_flag, mc.supply_type,
+           cf.id cfid, cf.add_date, cust_id, food_id, food_date, food_week,
+           f.id fid, name, category, label, price, photo, momal_flag,
+           c.id custid, create_time, create_by, is_deleted, customer_name,
+           customer_age, customer_sex, idcard, room_number, elder_type,
+           checkin_date, expiration_date, contact_tel, bed_id, psychosomatic_state,
+           attention, birthday, height, marital_status, weight, blood_type, filepath
+    from meal_calendar mc
+    left join cust_food cf
+    on cf.id = mc.custfood_id
+    left join food f
+    on f.id = cf.food_id
+    left join customer c
+    on c.id = cf.cust_id
+    <where>
+      <if test="custFood != null">
+        <if test="custFood.custId != null and custFood.custId != 0">
+          and c.id = #{custFood.custId}
+        </if>
+      </if>
+    </where>
+    order by cf.food_week
+  </select>
+</mapper>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nursing.center.mapper.BedMapper">
+  <resultMap id="BaseResultMap" type="com.nursing.center.model.Bed">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="INTEGER" property="createBy" />
+    <result column="is_deleted" jdbcType="INTEGER" property="isDeleted" />
+    <result column="room_number" jdbcType="VARCHAR" property="roomNumber" />
+    <result column="bed_status" jdbcType="VARCHAR" property="bedStatus" />
+    <result column="position_type" jdbcType="VARCHAR" property="positionType" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from bed
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.nursing.center.model.Bed">
+    insert into bed (id, create_time, create_by, 
+      is_deleted, room_number, bed_status, 
+      position_type, name)
+    values (#{id,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=INTEGER}, 
+      #{isDeleted,jdbcType=INTEGER}, #{roomNumber,jdbcType=VARCHAR}, #{bedStatus,jdbcType=VARCHAR}, 
+      #{positionType,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.nursing.center.model.Bed">
+    update bed
+    set create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=INTEGER},
+      is_deleted = #{isDeleted,jdbcType=INTEGER},
+      room_number = #{roomNumber,jdbcType=VARCHAR},
+      bed_status = #{bedStatus,jdbcType=VARCHAR},
+      position_type = #{positionType,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, create_time, create_by, is_deleted, room_number, bed_status, position_type, 
+    name
+    from bed
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, create_time, create_by, is_deleted, room_number, bed_status, position_type, 
+    name
+    from bed
+  </select>
+
+  <select id="setIdleAll" resultMap="BaseResultMap">
+    select id, create_time, create_by, is_deleted, room_number, bed_status, position_type,
+           name
+    from bed
+    where bed_status = 1
+  </select>
+
+  <update id="checkIn" parameterType="Integer">
+    update  bed
+    set bed_status = '2'
+    where id = #{id}
+  </update>
+
+  <update id="withdraw" parameterType="Integer">
+    update  bed
+    set bed_status = '1'
+    where id = #{id}
+  </update>
+</mapper>

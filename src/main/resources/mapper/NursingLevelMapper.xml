@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nursing.center.mapper.NursingLevelMapper">
+  <resultMap id="BaseResultMap" type="com.nursing.center.model.NursingLevel">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="add_date" jdbcType="TIMESTAMP" property="addDate" />
+    <result column="level_name" jdbcType="VARCHAR" property="levelName" />
+    <result column="level_status" jdbcType="CHAR" property="levelStatus" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from nursing_level
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.nursing.center.model.NursingLevel">
+    insert into nursing_level (id, add_date, level_name, 
+      level_status)
+    values (#{id,jdbcType=INTEGER}, #{addDate,jdbcType=TIMESTAMP}, #{levelName,jdbcType=VARCHAR}, 
+      #{levelStatus,jdbcType=CHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.nursing.center.model.NursingLevel">
+    update nursing_level
+    set add_date = #{addDate,jdbcType=TIMESTAMP},
+      level_name = #{levelName,jdbcType=VARCHAR},
+      level_status = #{levelStatus,jdbcType=CHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, add_date, level_name, level_status
+    from nursing_level
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, add_date, level_name, level_status
+    from nursing_level
+  </select>
+
+  <select id="queryAll" parameterType="com.nursing.center.model.NursingLevel" resultMap="BaseResultMap">
+    select nl.id, add_date, level_name, level_status,IFNULL(count(nc.id),0) as contentNum
+    from nursing_level nl
+    LEFT JOIN nursing_content nc
+    ON nl.id = nc.level_id
+    <where>
+      <if test="levelName != null and levelName != ''">
+            nl.level_name = #{levelName}
+      </if>
+    </where>
+    GROUP BY nl.id
+  </select>
+
+  <resultMap id="connResultMap" type="com.nursing.center.model.NursingLevel" extends="BaseResultMap">
+    <!-- 一对多 -->
+    <!--
+      property: 一对多关联，查询出来的多的一方List对象赋值给一的对象里的属性名
+      ofType: 一对多关联，查询出来的多的一方List中存的对象类名
+    -->
+    <collection property="contentList" ofType="com.nursing.center.model.NursingContent">
+      <id column="ncid" property="id"></id>
+      <result column="level_id" property="levelId"></result>
+      <result column="name" property="name"></result>
+      <result column="price" property="price"></result>
+      <result column="description" property="description"></result>
+    </collection>
+  </resultMap>
+
+  <select id="selById" parameterType="Integer" resultMap="connResultMap">
+        select nl.id, nl.add_date, nl.level_name, nl.level_status,
+               nc.id ncid, nc.level_id, nc.name, nc.price, nc.description
+        from nursing_level nl
+        left join nursing_content nc
+        on nl.id = nc.level_id
+        where nl.id = #{id}
+        order by nc.id ASC
+  </select>
+</mapper>

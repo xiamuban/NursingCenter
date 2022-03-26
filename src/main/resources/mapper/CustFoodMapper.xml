@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nursing.center.mapper.CustFoodMapper">
+  <resultMap id="BaseResultMap" type="com.nursing.center.model.CustFood">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="add_date" jdbcType="TIMESTAMP" property="addDate" />
+    <result column="remarks" jdbcType="VARCHAR" property="remarks" />
+    <result column="del_flag" jdbcType="VARCHAR" property="delFlag" />
+    <result column="cust_id" jdbcType="INTEGER" property="custId" />
+    <result column="food_id" jdbcType="INTEGER" property="foodId" />
+    <result column="food_date" jdbcType="TIMESTAMP" property="foodDate" />
+    <result column="food_week" jdbcType="INTEGER" property="foodWeek" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from cust_food
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.nursing.center.model.CustFood">
+    insert into cust_food (id, add_date, remarks, 
+      del_flag, cust_id, food_id, 
+      food_date, food_week)
+    values (#{id,jdbcType=INTEGER}, #{addDate,jdbcType=TIMESTAMP}, #{remarks,jdbcType=VARCHAR}, 
+      #{delFlag,jdbcType=VARCHAR}, #{custId,jdbcType=INTEGER}, #{foodId,jdbcType=INTEGER}, 
+      #{foodDate,jdbcType=TIMESTAMP}, #{foodWeek,jdbcType=INTEGER})
+
+    <selectKey keyProperty="id" resultType="int" order="AFTER">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.nursing.center.model.CustFood">
+    update cust_food
+    set add_date = #{addDate,jdbcType=TIMESTAMP},
+      remarks = #{remarks,jdbcType=VARCHAR},
+      del_flag = #{delFlag,jdbcType=VARCHAR},
+      cust_id = #{custId,jdbcType=INTEGER},
+      food_id = #{foodId,jdbcType=INTEGER},
+      food_date = #{foodDate,jdbcType=TIMESTAMP},
+      food_week = #{foodWeek,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, add_date, remarks, del_flag, cust_id, food_id, food_date, food_week
+    from cust_food
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, add_date, remarks, del_flag, cust_id, food_id, food_date, food_week
+    from cust_food
+  </select>
+</mapper>

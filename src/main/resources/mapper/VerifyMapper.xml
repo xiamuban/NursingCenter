@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.nursing.center.mapper.VerifyMapper">
+  <resultMap id="BaseResultMap" type="com.nursing.center.model.Verify">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="con_id" jdbcType="INTEGER" property="conId" />
+    <result column="idea" jdbcType="VARCHAR" property="idea" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="add_date" jdbcType="TIMESTAMP" property="addDate" />
+    <result column="status" jdbcType="CHAR" property="status" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from verify
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.nursing.center.model.Verify">
+    insert into verify (id, con_id, idea, 
+      user_id, add_date, status, 
+      type)
+    values (#{id,jdbcType=INTEGER}, #{conId,jdbcType=INTEGER}, #{idea,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=INTEGER}, #{addDate,jdbcType=TIMESTAMP}, #{status,jdbcType=CHAR}, 
+      #{type,jdbcType=INTEGER})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.nursing.center.model.Verify">
+    update verify
+    set con_id = #{conId,jdbcType=INTEGER},
+      idea = #{idea,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=INTEGER},
+      add_date = #{addDate,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=CHAR},
+      type = #{type,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select id, con_id, idea, user_id, add_date, status, type
+    from verify
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, con_id, idea, user_id, add_date, status, type
+    from verify
+  </select>
+</mapper>
